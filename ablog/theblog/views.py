@@ -11,7 +11,13 @@ from django.http import HttpResponseRedirect
 
 def LikeView(request, pk):
     post = get_object_or_404(Post, id=request.POST.get('post_id'))
-    post.likes.add(request.user)
+    liked = False
+    if post.likes.filter(id=request.user.id).exists():
+        post.likes.remove(request.user)
+        liked = False
+    else:
+        post.likes.add(request.user)
+        liked = True
     return HttpResponseRedirect(reverse('article-detail', args=[str(pk)]))
 
 class HomeView(ListView):
@@ -41,10 +47,16 @@ class ArticleDetailView(DetailView):
     def get_context_data(self, *args, **kwargs):
         cat_menu = Category.objects.all()
         contex = super(ArticleDetailView, self).get_context_data(*args, **kwargs)
-        contex["cat_menu"] = cat_menu
+
         stuff = get_object_or_404(Post, id=self.kwargs['pk'])
         total_likes = stuff.total_likes()
+
+        liked = False
+        if stuff.likes.filter(id=self.request.user.id).exists():
+            liked = True
+        contex["cat_menu"] = cat_menu
         contex["total_likes"] = total_likes
+        contex["liked"] = liked
         return contex
 
 class AddPostView(CreateView):
