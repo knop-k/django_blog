@@ -34,7 +34,6 @@ post author: {{ post.author.id }}
 
 
 <!--    <a href="{% url 'home' %}" class="btn btn-secondary">Back</a>-->
-    <br/><br/>
     <hr>
     <br/>
     <form action="{% url 'like_post' post.pk %}" method="POST">
@@ -52,25 +51,8 @@ post author: {{ post.author.id }}
 
             - {{ total_likes }} Likes
     </form>
-<br/><br/>
-
-<h2>Comments ...</h2>
-<br/>
-
-{% if not post.comments.all %}
-    No Comments Yet <a href="#"> Add One</a>
-
-{% else %}
-    {% for comment in post.comments.all %}
-        <strong>{{ comment.name }} - {{ comment.date_added }}</strong>
-        <br/>
-        {{ comment.body }}
-        <br/><br/>
-    {% endfor %}
-{% endif %}
 <hr>
 
-<br/><br/>
 
 
 <div class="card mb-3">
@@ -115,6 +97,31 @@ post author: {{ post.author.id }}
   </div>
 </div>
 
+<br/>
+
+
+
+<h1>Comments ...</h1>
+<br/>
+
+{% if not post.comments.all %}
+    No Comments Yet <a href="{% url 'add_comment' post.pk %}"> Add One</a>
+
+{% else %}
+
+
+    {% for comment in post.comments.all %}
+        <strong>{{ comment.name }} - {{ comment.date_added }}</strong>
+        <br/>
+        {{ comment.body }}
+        <br/><br/>
+
+    {% endfor %}
+    <a href="{% url 'add_comment' post.pk %}">Add Comment</a>
+{% endif %}
+<br/>
+
+<br/><br/>
 {% endblock %}
 
 
